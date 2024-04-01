@@ -3,7 +3,10 @@
   <groupId>event.planner</groupId>
   <artifactId>weddingPlanner</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  
+  <properties>
+  <sonar.organization>test2forme</sonar.organization>
+  <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+</properties>
   
   <dependencies>
 	  <dependency>
