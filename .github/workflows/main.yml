@@ -1,49 +1,37 @@
-name: SonarCloud Analysis
+name: SonarCloud
 on:
   push:
     branches:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
-
 jobs:
-  build-and-analyze:
-    name: Build and Analyze with SonarCloud
+  build:
+    name: Build and analyze
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Ensures a full history for SonarCloud analysis
-
-      - name: Set Up JDK 17
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: 17
-          distribution: 'zulu'  # Uses Zulu OpenJDK distribution
-
-      - name: Cache SonarCloud Packages
+          distribution: 'zulu' # Alternative distribution options are available.
+      - name: Cache SonarCloud packages
         uses: actions/cache@v3
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-
-      - name: Cache Maven Packages
+      - name: Cache Maven packages
         uses: actions/cache@v3
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-
-      # Remove the following step if your pom.xml is at the root of your repository
-      - name: Change to Maven Project Directory
-        run: cd actual-directory-path  # Replace actual-directory-path with the path to your Maven project
-
-      - name: Build and Analyze
+      - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Required for SonarCloud analysis to access PR information
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # SonarCloud token for authentication
-        run: |
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=YourProjectKey
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=test2forme_test
